@@ -1,5 +1,4 @@
 name: wikifier
 author: Andy Castille
 dependencies:
-  common_regex: any
-  html5plus: any
+  html5lib: any
