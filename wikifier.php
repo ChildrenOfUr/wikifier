@@ -209,6 +209,114 @@ switch ($template) {
 		}
 	break;
 
+	case 'item';
+	////////////////////
+	/// Collect data ///
+	////////////////////
+	$category = qp($doc, "h4.category-nav-back a")->text();
+	$imagename = str_replace(" ", "_", qp($doc, "h1.first")->text());
+	$description = qp($doc, "p.enc-description")->text();
+	$animations = qp($doc, 'h4:contains(Animations)+table.asset_list');
+	$staticimages = qp($doc, 'h4:contains(Static Images)+table.asset_list');
+	$animatedgifs = qp($doc, '.gifs table.asset_list');
+	$acq = qp($doc, "li.item-note")->text();
+	$currants = qp($doc, "li.item-price strong")->text();
+	$slotnum = qp($doc, "li.item-stack strong")->text();
+	$wear = qp($doc, "li.item-wear strong")->text();
+
+	/////////////
+	/// Write ///
+	/////////////
+
+	if ($category == "Other") {
+		$category = ucfirst(explode("/", $url)[3]);
+	}
+	out('[[Category:' . $category . ']]');
+	out('[[File:' . $imagename . '.png|right|frame|' . $description . ']]');
+	// the file will not exist, but it will be put in a "pages with missing file links" category to upload one later
+	out('');
+	out('== Acquisition ==');
+	out('');
+	out(trim($acq));
+	out('');
+	out('== Facts ==');
+	out('');
+	out('* Worth about <big>' . $currants . '</big>');
+	out('* Fits <big>' . $slotnum . '</big> in a backpack slot');
+	out('* Durable for about <big>' . $wear . '</big>');
+	out('');
+	out('== Assets ==');
+
+	out('=== Animations ===');
+
+	out('');
+	out('<markdown>');
+	out('<table class="table">');
+	out("\t<tr>");
+	out("\t\t<th>State</th>");
+	out("\t\t<th>Filesize</th>");
+	out("\t\t<th>Dimensions</th>");
+	out("\t\t<th>Frame Dimensions</th>");
+	out("\t\t<th># of Frames</th>");
+	out("\t\t<th>Loops</th>");
+	out("\t</tr>");
+	foreach ($animations->find('tr:not(:first-child') as $row) {
+		out("\t<tr>");
+		echo "\t\t" . str_replace(array("\n", "  "), "", $row->find('td:first-child')->html()) . "\n";
+		foreach($row->find('td:not(:first-child)') as $data) {
+			out("\t\t<td>" . trim($data->find('td:not(:first-child)')->text()) . "</td>");
+		}
+		out("\t</tr>");
+	}
+	out('</table>');
+	out('</markdown>');
+	out('');
+
+	out('=== Static Images ===');
+
+	out('');
+	out('<markdown>');
+	out('<table class="table">');
+	out("\t<tr>");
+	out("\t\t<th>State</th>");
+	out("\t\t<th>Filesize</th>");
+	out("\t\t<th>Dimensions</th>");
+	out("\t</tr>");
+	foreach($staticimages->find('tr:not(:first-child') as $row) {
+		out("\t<tr>");
+		echo "\t\t" . str_replace(array("\n", "  "), "", $row->find('td:first-child')->html()) . "\n";
+		foreach($row->find('td:not(:first-child)') as $data) {
+			out("\t\t<td>" . trim($data->find('td:not(:first-child)')->text()) . "</td>");
+		}
+		out("\t</tr>");	
+	}
+	out('</table>');
+	out('</markdown>');
+	out('');
+
+	out('=== Animated GIFs ===');
+
+	out('');
+	out('<markdown>');
+	out('<table class="table">');
+	out("\t<tr>");
+	out("\t\t<th>Image</th>");
+	out("\t\t<th>Dimensions</th>");
+	out("\t\t<th>Filesize</th>");
+	out("\t</tr>");
+	foreach($animatedgifs->find('tr:not(:first-child') as $row) {
+		out("\t<tr>");
+		echo "\t\t" . str_replace(array("\n", "  ", "data-src"), array("", "", "src"), $row->find('td:first-child')->html()) . "\n";
+		foreach($row->find('td:not(:first-child)') as $data) {
+			out("\t\t<td>" . trim($data->find('td:not(:first-child)')->text()) . "</td>");
+		}
+		out("\t</tr>");	
+	}
+	out('</table>');
+	out('</markdown>');
+	out('');
+	break;
+
 	default:
 		echo('Invalid template specified.');
 	break;

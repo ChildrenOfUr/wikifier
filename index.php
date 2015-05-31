@@ -24,14 +24,14 @@
 	<form id="input" action="" method="GET">
 		<fieldset>
 			<input type="url" name="url" placeholder="URL (http://glitchthegame.com/... or http://www.glitchthegame.com/...)" required>
-			<!--<select name="template">
+			<select name="template">
 				<option disabled selected>Page Type</option>
 				<option value="inhabitant">Inhabitant</option>
-			</select>-->
+				<option value="item">Item</option>
+			</select>
 			<button type="submit">Convert</button>
 		</fieldset>
 		<br>
-		<input type="hidden" name="template" value="inhabitant">
 	</form>
 	<textarea disabled><?php include_once("wikifier.php"); ?></textarea>
 </body>
