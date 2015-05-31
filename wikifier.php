@@ -4,7 +4,7 @@
 /// Load dependencies and set error reporting ///
 /////////////////////////////////////////////////
 
-ini_set('display_errors', 1); 
+ini_set('display_errors', 1);
 error_reporting(E_ALL);
 libxml_use_internal_errors(TRUE);
 
@@ -37,14 +37,22 @@ if ($doc == "") {
 
 switch ($template) {
 	case 'inhabitant':
+		////////////////////
+		/// Collect data ///
+		////////////////////
 		$category = qp($doc, "h4.category-nav-back a")->text();
 		$imagename = str_replace(" ", "_", qp($doc, "h1.first")->text());
 		$description = qp($doc, "p.enc-description")->text();
 		$tips = qp($doc, 'ul.item-notes');
-		$animations = qp($doc, 'h4:contains(Animations)+table.asset_list');
+		$animations = qp($doc, 'h4:contains(Animations)+table.asset_list, .sprites > table.asset_list');
 		$staticimages = qp($doc, 'h4:contains(Static Images)+table.asset_list');
 		$animatedgifs = qp($doc, '.gifs table.asset_list');
-		$conversations = qp($doc, '.tab_contents.conversations');
+		$conversations = qp($doc, '.tab_contents.conversations *')->html();
+		$merchandise = qp($doc, 'ul.items-list');
+
+		//////////////////////////////////////
+		/// Decide which sections to write ///
+		//////////////////////////////////////
 
 		if (count($tips) == 0) {
 			$showTips = false;
@@ -52,10 +60,24 @@ switch ($template) {
 			$showTips = true;
 		}
 
+		if (count($merchandise) == 0) {
+			$showMerchandise = false;
+		} else {
+			$showMerchandise = true;
+		}
+
+		/////////////
+		/// Write ///
+		/////////////
+
+		if ($category == "Other") {
+			$category = ucfirst(explode("/", $url)[3]);
+		}
 		out('[[Category:' . $category . ']]');
 		out('[[File:' . $imagename . '.png|right|frame|' . $description . ']]');
 		// the file will not exist, but it will be put in a "pages with missing file links" category to upload one later
 		out('');
+
 		if ($showTips) {
 			out('== Tips ==');
 			out('');
@@ -66,25 +88,17 @@ switch ($template) {
 
 			out('');
 		}
+		
 		out('== Interactions ==');
+
 		out('');
-		out('=== Conversations ===');
-		out('');
-		foreach($conversations->find('hr+span') as $title) {
-			out('==== ' . $title->text() . ' ====');
-			out('');
-			out('<markdown>');
-			foreach ($conversations->find('span:not(hr+span)') as $label) {
-				out('>**' . trim($label->text()) . ':** ' . $conversations->find('span+blockquote')->text());
-				out('>');
-			}
-			out('</markdown>');
-			out('');
-		}
-		out('');
+
 		out('== Assets ==');
+
 		out('=== Sprite Sheets ===');
+
 		out('==== Animations ====');
+
 		out('');
 		out('<markdown>');
 		out('<table class="table">');
@@ -104,11 +118,12 @@ switch ($template) {
 			}
 			out("\t</tr>");
 		}
-		out("\t<tr>");
 		out('</table>');
 		out('</markdown>');
 		out('');
+
 		out('==== Static Images ====');
+
 		out('');
 		out('<markdown>');
 		out('<table class="table">');
@@ -128,7 +143,9 @@ switch ($template) {
 		out('</table>');
 		out('</markdown>');
 		out('');
+
 		out('==== Animated GIFs ====');
+
 		out('');
 		out('<markdown>');
 		out('<table class="table">');
@@ -147,6 +164,55 @@ switch ($template) {
 		}
 		out('</table>');
 		out('</markdown>');
+		out('');
+		if ($conversations != NULL) {
+
+			out('=== Conversations ===');
+
+			out('');
+			# Conversations is a string containing the HTML of the conversations tab.
+			# Fix the conversations by replacing each element from this array
+			# with its corresponding element (by index) from the next array.
+			$conversationsSearch = array(
+				"<table>",
+				"</table>",
+				"<blockquote>",
+				"</blockquote>",
+				"<hr />",
+				"<p>",
+				"</p>",
+				"  ",
+				'<span style="font-size: 12px; font-weight: bold;">',
+				'<span style="font-size: 14px; font-weight: bold;">'
+			);
+			$conversationsReplace = array(
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"\n" . '<span style="font-size: 12px; font-weight: bold;">',
+				"\n\n" . '<span style="font-size: 14px; font-weight: bold;">'
+			);
+			$conversations = str_replace($conversationsSearch, $conversationsReplace, $conversations);
+			# close ** and ====
+			//$conversations = '====' . join(array_map("appendEnd4Head", explode('====', $conversations)));
+			out($conversations);
+			out('');
+		}
+		if ($showMerchandise) {
+			out('== Merchandise ==');
+			out('');
+			
+			foreach ($merchandise->find('li') as $item) {
+				out('* [[' . trim($item->text()) . ']]');
+			}
+
+			out('');
+		}
 	break;
 
 	default:
@@ -160,5 +226,13 @@ switch ($template) {
 
 function out($text) {
 	echo($text . "\n");
+}
+
+function appendEnd4Head($s) {
+	return $s . " ====";
+}
+
+function appendEndBold($s) {
+	return $s . ": **";
 }
 ?>
