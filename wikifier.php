@@ -88,10 +88,6 @@ switch ($template) {
 
 			out('');
 		}
-		
-		out('== Interactions ==');
-
-		out('');
 
 		out('== Assets ==');
 
