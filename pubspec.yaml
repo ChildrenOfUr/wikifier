@@ -1,4 +1,0 @@
-name: wikifier
-author: Andy Castille
-dependencies:
-  html5lib: any
