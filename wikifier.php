@@ -91,9 +91,7 @@ switch ($template) {
 
 		out('== Assets ==');
 
-		out('=== Sprite Sheets ===');
-
-		out('==== Animations ====');
+		out('=== Animations ===');
 
 		out('');
 		out('<markdown>');
@@ -118,7 +116,7 @@ switch ($template) {
 		out('</markdown>');
 		out('');
 
-		out('==== Static Images ====');
+		out('=== Static Images ===');
 
 		out('');
 		out('<markdown>');
@@ -140,7 +138,7 @@ switch ($template) {
 		out('</markdown>');
 		out('');
 
-		out('==== Animated GIFs ====');
+		out('=== Animated GIFs ===');
 
 		out('');
 		out('<markdown>');
@@ -152,7 +150,7 @@ switch ($template) {
 		out("\t</tr>");
 		foreach($animatedgifs->find('tr:not(:first-child') as $row) {
 			out("\t<tr>");
-			echo "\t\t" . str_replace(array("\n", "  "), "", $row->find('td:first-child')->html()) . "\n";
+			echo "\t\t" . str_replace(array("\n", "  ", "data-src"), array("", "", "src"), $row->find('td:first-child')->html()) . "\n";
 			foreach($row->find('td:not(:first-child)') as $data) {
 				out("\t\t<td>" . trim($data->find('td:not(:first-child)')->text()) . "</td>");
 			}
