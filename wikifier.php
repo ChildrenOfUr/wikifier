@@ -230,7 +230,8 @@ switch ($template) {
 	/////////////
 
 	if ($category == "Other") {
-		$category = ucfirst(explode("/", $url)[3]);
+		$categoryArray = explode("/", $url);
+		$category = ucfirst($categoryArray[3]);
 	}
 	out('[[Category:' . $category . ']]');
 	out('[[File:' . $imagename . '.png|right|frame|' . $description . ']]');
