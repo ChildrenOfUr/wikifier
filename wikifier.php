@@ -319,8 +319,47 @@ switch ($template) {
 	out('');
 	break;
 
+	case 'achievement':
+		////////////////////
+		/// Collect data ///
+		////////////////////
+		$category = qp($doc, "h4.category-nav-back a")->text();
+		$imagename = str_replace(" ", "_", qp($doc, "h1.first")->text());
+		$description = qp($doc, "p.enc-description")->text();
+		$related = qp($doc, 'div.section.label-section > ul.items-list.achievement-badges');
+
+		/////////////
+		/// Write ///
+		/////////////
+	
+		if (count($related) != 0) {
+			$showRelated = true;
+		} else {
+			$showRelated = false;
+		}
+		
+		out('[[Category:' . $category . ']]');
+		out('[[File:' . $imagename . '.png|center]]');
+		// the file will not exist, but it will be put in a "pages with missing file links" category to upload one later
+		out('');
+		out('== Criteria ==');
+		out('');
+		out('<big>' . $description . '</big>');
+		out('');
+		if ($showRelated) {
+			out('== Related Achievements ==');
+			out('');
+			out('<gallery>');
+			foreach ($related->find('li') as $achievement) {
+				out(trim(str_replace(" ", "_", $achievement->text())) . '.png|[[' . trim($achievement->text()) . ']]');
+			}
+			out('</gallery>');
+		}
+
+	break;
+
 	default:
-		echo('Invalid template specified.');
+		echo('ERROR >>> Invalid template specified.');
 	break;
 }
 
