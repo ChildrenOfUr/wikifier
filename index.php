@@ -27,6 +27,7 @@
 			<input type="url" name="url" placeholder="URL (http://glitchthegame.com/... or http://www.glitchthegame.com/...)" required>
 			<select name="template">
 				<option disabled selected>Page Type</option>
+				<option value="achievement">Achievement</option>
 				<option value="inhabitant">Inhabitant</option>
 				<option value="item">Item</option>
 			</select>
