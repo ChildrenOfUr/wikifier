@@ -18,7 +18,16 @@ if (isset($_GET["url"]) && isset($_GET["template"])) {
 	$url = $_GET["url"];
 	$template = $_GET["template"];
 } else {
-	die(">>> Your output will show up here.");
+	die("
+>>> Your output will show up here.
+
+>>> Enter a valid URL and choose the template to use.
+>>> You will need to take a screenshot of the image for everything but achievements, which you can right click and save.
+>>> Make sure to use the filename in the wikitext when saving images!
+>>> Upload images to the wiki by clicking the 'Upload file' link in the left wiki sidebar.
+
+>>> Thank you for contributing!
+");
 }
 
 ////////////////////////////////////////////////////
