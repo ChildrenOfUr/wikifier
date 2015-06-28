@@ -84,8 +84,9 @@ switch ($template) {
 			$category = ucfirst($categoryArray[3]);
 		}
 		out('[[Category:' . $category . ']]');
-		out('[[File:' . $imagename . '.png|right|frame|' . $description . ']]');
-		// the file will not exist, but it will be put in a "pages with missing file links" category to upload one later
+		out('[[File:' . $imagename . '.png|right]]'); // the file will not exist, but it will be put in a "pages with missing file links" category to upload one later
+		out('');
+		out('<big>' . $description . '</big>');
 		out('');
 
 		if ($showTips) {
@@ -243,8 +244,9 @@ switch ($template) {
 		$category = ucfirst($categoryArray[3]);
 	}
 	out('[[Category:' . $category . ']]');
-	out('[[File:' . $imagename . '.png|right|frame|' . $description . ']]');
-	// the file will not exist, but it will be put in a "pages with missing file links" category to upload one later
+	out('[[File:' . $imagename . '.png|right]]'); // the file will not exist, but it will be put in a "pages with missing file links" category to upload one later
+	out('');
+	out('<big>' . $description . '</big>');
 	out('');
 	out('== Acquisition ==');
 	out('');
